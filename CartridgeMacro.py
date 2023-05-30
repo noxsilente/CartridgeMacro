@@ -1,5 +1,5 @@
-#################################################################################################
-#                                            CartridgeMacro   ---   for FreeCAD
+################################################################################################# Line 704
+#                                            CartridgeMacro   ---   for FreeCAD                                                            Controllare per innesco
 #       
 #    Author: NoxSilente
 #    Github: https://github.com/noxsilente/CartridgeMacro    --------- GNU V.3 Licence
@@ -15,13 +15,13 @@
 #    This macro is in 'alpha' version, intended to be improved (I'm already working on a version using Tkinter library), so
 #    some issues can occur during the creation of objects. Please report via email or modify the script if needed 
 #      
-# I tried to make the script easier using my knowledge (quite basic)
-#
+# I tried to make the script easier using my knowledge --- Cleaned for having less lines of code as possible
+# First version: 15/04/2023 (DD/MM/YYYY)
 #################################################################################################
+__Title__ = "CartridgeMacro"
+__Version__ = "0.3"
+__Date__     = "30/05/2023" #DD/MM/YYYY
 
-
-__title__ = "CartridgeMacro"
-__version__ = "0.1"
 # importing libraries
 import FreeCAD
 from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QGridLayout, QCheckBox, QRadioButton, QMessageBox
@@ -30,11 +30,11 @@ sb = -2.225 #small boxer
 lb = -2.665 #large boxer
 # creating a list which have to handle input data
 V_list = ['', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
-check_list = [0, 0, 0, 1, 0, 0]
+check_list = [1, 0, 0, 1, 0, 0]
 # other values
 trim_vals = 0,
 n = 0
-# if the macro doesn't load the FreeCAD library it try again, and if it doesn't for the second time, a message will occur
+# if FreeCAD library is not loaded try again, and if it doesn't for the second time, a message will occur
 # If it doesn't load the library reopening the macro, the user have to create a fake object and,
 # in the next opening, it will be possible to operate 
 try:
@@ -47,13 +47,12 @@ except:
     except:
         err=QMessageBox()
         err.setIcon(QMessageBox.Critical)
-        err.setInformativeText('FreeCad not loaded - try to create an object then restart macro')
-        err.setStandardButtons(QMessageBox.Ok | QMessageBox.Close)
+        err.setInformativeText('FreeCad not loaded - trying to create a fake object then restart macro')
+        err.setStandardButtons(QMessageBox.Ok | QMessageBox.Close )
         if err.exec() == QMessageBox.Close:
             sys.exit()
         else:
-            pass
-        err.show()
+            n = 1    #err.show()
 # If there is no document opened, it will be created a new one
 try:
     _Doc_  =App.getDocument(App.ActiveDocument.Name).Name #'proiettili2'
@@ -63,7 +62,7 @@ except:
     _Doc_  =App.getDocument(App.ActiveDocument.Name).Name
     #print(_Doc_)
 # Creating Classes:
-# All classes have an __init__ def where it will appear the offset.
+# All classes have an __init__  where it will appear the offset.
 # Every offset is intended to ask the necessary values for the creation of the desired object
 # with the def 'get_values', all inputs will be processed and inserted in 'V_list'. 
 #
@@ -75,11 +74,11 @@ class Bottleneck(QWidget):
     def __init__(self):
         super(Bottleneck, self).__init__()
         def get_values():
-#    First value = name of the object. If no name is given it will be 'NoName'
-#    First range values = Diameter dimensions. 
-#                                 They are half of the value and in the negative side of the plane (not essensial choice)
-#    Second range values = Length dimensions.
-#                                 They are intended just to define the lengths of the object
+        #    First value = name of the object. If no name is given it will be 'NoName'
+        #    First range values = Diameter dimensions. 
+        #                                 They are half of the value and in the negative side of the plane (not essensial choice)
+        #    Second range values = Length dimensions.
+        #                                They are intended just to define the lengths of the object
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             if (v_list[9].text() == '') or (v_list[9]=='0'):
                 v_list[9] = v_list[8]
@@ -88,20 +87,19 @@ class Bottleneck(QWidget):
             for i in range(7,14):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
             print(V_list)
-
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("L2"), QLabel("L3"), QLabel("Lrim"), QLabel('lRIM'), QLabel('LRIM'), QLabel("Ø Proiettile"), QLabel("Ø Collo"), QLabel("Ø Base Collo"), QLabel("Ø Spalla"), QLabel("Ø Base"), QLabel("ø Fondello "), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Neck Length"), QLabel("Base-Shoulder Length"), QLabel("Rim  Length"), QLabel('Internal Rim  Length'), QLabel('Total Rim  Length'), QLabel("Ø Bullet "), QLabel("Ø Neck"), QLabel("Ø Base Neck"), QLabel("Ø Shoulder"), QLabel("Ø Base"), QLabel("ø Rim "), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(), QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
         layout.addLayout(Hlayout,0,0)
-# the range is defined based on the number of values:
-# after the firs 'V_list' element, others are defined in couples
-# (only for a better arrangement of the offset)
+        # the range is defined based on the number of values:
+        # after the firs 'V_list' element, others are defined in couples
+        # (only for a better arrangement of the offset)
         for i in range(1,12, 2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -111,12 +109,12 @@ class Bottleneck(QWidget):
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
             layout.addLayout(Hlayout,i,0)
-# if a value exceed from the couples it will be added 'manually'
+        # if a value exceed from the couples it will be added 'manually'
         Hlayout=QHBoxLayout()
         Hlayout.addWidget(l_list[-1])
         Hlayout.addWidget(v_list[-1])
         layout.addLayout(Hlayout, 13, 0)
-# adding the group (BoxLayout) to the widget
+        # adding the group (BoxLayout) to the widget
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -138,18 +136,16 @@ class B_Rimmed(QWidget):
             for i in range(5,11):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
             print(V_list)
-    
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("L2"), QLabel("L3"), QLabel("Lrim"), QLabel("Ø Proiettile"), QLabel("Ø Collo"),QLabel("Ø Base Collo"), QLabel("Ø Spalla"), QLabel("Ø Base"), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Neck Length"), QLabel("Base-Shoulder Length"), QLabel("Rim  Length"), QLabel("Ø Bullet "), QLabel("Ø Neck"),QLabel("Ø Base Neck"), QLabel("Ø Shoulder"), QLabel("Ø Base"), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(), QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
-        layout.addLayout(Hlayout,0,0)
-    
+        layout.addLayout(Hlayout,0,0) 
         for i in range(1,10, 2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -158,12 +154,7 @@ class B_Rimmed(QWidget):
             Hlayout.addWidget(v_list[i])
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
-            layout.addLayout(Hlayout,i,0)
-#        Hlayout=QHBoxLayout()
-#        Hlayout.addWidget(l_list[-1])
-#        Hlayout.addWidget(v_list[-1])
-#        layout.addLayout(Hlayout, 8, 0)
-    
+            layout.addLayout(Hlayout,i,0) 
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -184,19 +175,17 @@ class B_Belted(QWidget):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
             for i in range(7,15):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
-            print(V_list)
-    
+            print(V_list)   
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("L2"), QLabel("L3"), QLabel("Lrim"), QLabel('lRIM'), QLabel('LRIM'), QLabel("Ø Proiettile"), QLabel("Ø Collo"), QLabel("Ø Base Collo"), QLabel("Ø Spalla"), QLabel("Ø Base"),  QLabel("Ø Cinturino"), QLabel("ø Fondello "), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Neck Length"), QLabel("Base-Shoulder Length"), QLabel("Rim  Length"), QLabel('Internal Rim  Length'), QLabel('Total Rim  Length'), QLabel("Ø Bullet "), QLabel("Ø Neck"), QLabel("Ø Base Neck"), QLabel("Ø Shoulder"), QLabel("Ø Base"),  QLabel("Ø Belt"), QLabel("ø Rim "), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(), QLineEdit(), QLineEdit(), QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(), QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
-        layout.addLayout(Hlayout,0,0)
-    
+        layout.addLayout(Hlayout,0,0)  
         for i in range(1,14, 2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -205,9 +194,7 @@ class B_Belted(QWidget):
             Hlayout.addWidget(v_list[i])
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
-            layout.addLayout(Hlayout,i,0)
-
-    
+            layout.addLayout(Hlayout,i,0)  
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -229,18 +216,16 @@ class S_Rimmed(QWidget):
             for i in range(3,7):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
             print(V_list)
-    
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("Lrim"),  QLabel("Ø Proiettile"), QLabel("Ø Collo"), QLabel("Ø Base"), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Rim  Length"),  QLabel("Ø Bullet "), QLabel("Ø Neck"), QLabel("Ø Base"), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
-        layout.addLayout(Hlayout,0,0)
-    
+        layout.addLayout(Hlayout,0,0)  
         for i in range(1,6, 2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -249,8 +234,7 @@ class S_Rimmed(QWidget):
             Hlayout.addWidget(v_list[i])
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
-            layout.addLayout(Hlayout,i,0)
-    
+            layout.addLayout(Hlayout,i,0)  
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -272,18 +256,16 @@ class Straight(QWidget):
             for i in range(5,10):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
             print(V_list)
-
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("Lrim"), QLabel('lRIM'), QLabel('LRIM'), QLabel("Ø Proiettile"), QLabel("Ø Collo"), QLabel("Ø Base"), QLabel("ø Fondello "), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Rim  Length"), QLabel('Internal Rim  Length'), QLabel('Total Rim  Length'), QLabel("Ø Bullet "), QLabel("Ø Neck"), QLabel("Ø Base"), QLabel("ø Rim "), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(), QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
         layout.addLayout(Hlayout,0,0)
-
         for i in range(1,8,2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -297,7 +279,6 @@ class Straight(QWidget):
         Hlayout.addWidget(l_list[-1])
         Hlayout.addWidget(v_list[-1])
         layout.addLayout(Hlayout, 8,0 )
-
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -319,18 +300,16 @@ class B_Straight(QWidget):
             for i in range(5,11):
                 V_list[i] = -(float(v_list[i].text())/2) if v_list[i].text() !='' else '0'
             print(V_list)
-
         Vlayout = QVBoxLayout()
         Hlayout=QHBoxLayout()
         group = QGroupBox()    
         layout = QGridLayout(group)
         layout.setHorizontalSpacing(10)
-        l_list=[QLabel("NOME:"), QLabel("L1"), QLabel("Lrim"), QLabel('lRIM'), QLabel('LRIM'), QLabel("Ø Proiettile"), QLabel("Ø Collo"), QLabel("Ø Base"), QLabel("Ø Cinturino"),QLabel("ø Fondello "), QLabel("Ø Fondello")]
+        l_list=[QLabel("NOME:"), QLabel("Tot. Length"), QLabel("Rim  Length"), QLabel('Internal Rim  Length'), QLabel('Total Rim  Length'), QLabel("Ø Bullet "), QLabel("Ø Neck"), QLabel("Ø Base"), QLabel("Ø Belt"),QLabel("ø Rim "), QLabel("Ø Rim")]
         v_list =[QLineEdit(),QLineEdit(), QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit(),QLineEdit()]    
         Hlayout.addWidget(l_list[0])
         Hlayout.addWidget(v_list[0])
         layout.addLayout(Hlayout,0,0)
-
         for i in range(1,10,2):
             Hlayout=QHBoxLayout()
             v_list[i].setFixedWidth(50)
@@ -339,9 +318,7 @@ class B_Straight(QWidget):
             Hlayout.addWidget(v_list[i])
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
-            layout.addLayout(Hlayout,i,0)
-    
-    
+            layout.addLayout(Hlayout,i,0)  
         Vlayout.addWidget(group)               
         button = QPushButton('OK')     
         button.clicked.connect(get_values)
@@ -350,7 +327,7 @@ class B_Straight(QWidget):
 ####################################################################################
 #                                        MAIN CLASS
 ####################################################################################
-class AmmoMaker(QWidget):       
+class AmmoMaker(QWidget):    
     def __init__(self):
         super(AmmoMaker, self).__init__()
         self.setWindowTitle('CartridgeMaker')
@@ -364,9 +341,12 @@ class AmmoMaker(QWidget):
         self.opt1 = QRadioButton('Small')
         self.opt2 = QRadioButton('Large')
         self.opt3 = QRadioButton('Rimfire')
+        self.opt1.setChecked(True)
         self.ck1 = QRadioButton('Boxer',)
+        self.ck1.setChecked(True)
         self.ck2 = QRadioButton('Berdan') 
         self.form1 = QRadioButton('Bottleneck')
+        self.form1.setChecked(True)
         self.form2 = QRadioButton('Straight')
         self.form3 = QRadioButton('Rimmed')
         self.form4 = QRadioButton('Belted')
@@ -401,7 +381,6 @@ class AmmoMaker(QWidget):
         self.error_msg.setIcon(QMessageBox.Critical)
         self.error_msg.setText('Wrong settings')
         self.error_msg.setWindowTitle('Error')
-
         self.group_layout = QGridLayout(self.group)
         self.button = QPushButton('Crea!')
         self.button.clicked.connect(self.get_elements)
@@ -411,6 +390,10 @@ class AmmoMaker(QWidget):
         self.group_layout.addWidget(self.button, 2, 1)
         self.group_layout.addWidget(Bottleneck(), 1, 0)
         self.setLayout(self.group_layout)
+        if n == 1:
+            V_list = ['fake', 2.0, 1.0, -2.5, -3.0, -3.5, -4.0] 
+            check_list = [0, -1, 0, 5, 0, 0]
+            self.get_elements()
         self.show()
 # if a cartridge class is called, the last element of the grid will be deleted recreating the wanted class' offset
     def class_value(self):
@@ -450,50 +433,49 @@ class AmmoMaker(QWidget):
         elif self.opt2.isChecked():
             check_list[0] = 2
         elif self.opt3.isChecked():
+            if (check_list[3] == 5) or (check_list[3] == 3):
+                pass
+            else:
+                 self.error_msg.setInformativeText('Cannot be Rimfire')
+                 self.error_msg.show()
             check_list[0] = 0
-
-              
+            check_list[1] = -1           
     def get_elements(self):
-
-        print(check_list)
-        print(V_list, end=' + ')
-        print(_Doc_)
+    # Automatic conversion mm - inches:
+    # If an element length is less than a costant (6) there is an automatic measurements conversion
+        if V_list[1] < 6:
+            for i in range(1,len(V_list)):
+                V_list[i] = V_list[i]*25.4
         ints=[str(i) for i in range(10)]
-        if (V_list[0][:1]=='.') or (V_list[0][:1] in ints ) :  
+        if (V_list[0][:1]=='.') or (V_list[0][:1] in ints ) or (V_list[0] == '') :  
             new_val =  'Cartridge'
         else:
-             new_val = V_list[0]
-        
-        #Origin='Origin'+str(t)+'.'+Plane+'.'
-        sketch_name= new_val+'_base'#time.strftime('_%H:%M:%S')
-
-        obj = App.activeDocument().addObject("PartDesign::Body",new_val)
-        Gui.activateView('Gui::View3DInventor', True) 
-        #Gui.ActiveDocument.ActiveView.getActiveObject('pdbody')
-        Gui.activeView().setActiveObject('pdbody',obj)
-        Gui.Selection.clearSelection()
-        Gui.Selection.addSelection(obj)
-        App.ActiveDocument.recompute()
-        #Gui.Selection.addSelection(_Doc_,new_val,Origin)
-        #print(_Doc_ + ' ' + new_val + ' ' + Origin)
-        plane= [o.Label for o in obj.Origin.OriginFeatures if o.Role == 'XZ_Plane'][0]
-        #obj.newObject('Sketcher::SketchObject',sketch_name)
-        App.getDocument(_Doc_).getObject(new_val).newObject('Sketcher::SketchObject',sketch_name)
-        App.getDocument(_Doc_).getObject(sketch_name).Support = (App.getDocument(_Doc_).getObject(plane),[''])
-        App.getDocument(_Doc_).getObject(sketch_name).MapMode = 'FlatFace'
-        App.getDocument(_Doc_).getObject(new_val).Label = V_list[0]
-        App.ActiveDocument.recompute()
-
-####################################################################################
-#
-#                                                         Bottleneck Rimless    
-#
-####################################################################################
-#      1  2  3     
+            new_val = V_list[0]
+        try:
+            obj = App.activeDocument().addObject("PartDesign::Body",new_val)
+            sketch_name= obj.Label+'_base'
+            #Gui.ActiveDocument.ActiveView.getActiveObject('pdbody')
+            Gui.activeView().setActiveObject('pdbody',obj)
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj)
+            App.ActiveDocument.recompute()
+            plane= [o.Label for o in obj.Origin.OriginFeatures if o.Role == 'XZ_Plane'][0]
+            App.getDocument(_Doc_).getObject(new_val).newObject('Sketcher::SketchObject',sketch_name)
+            App.getDocument(_Doc_).getObject(sketch_name).Support = (App.getDocument(_Doc_).getObject(plane),[''])
+            App.getDocument(_Doc_).getObject(sketch_name).MapMode = 'FlatFace'
+            ######################## This value fit well for almost all cases
+            berdan_constant = Part.ArcOfCircle(Part.Circle(App.Vector(0,2.7,0),App.Vector(0,0,1),1.5),3.141593,4.716321)
+            ########################
+            App.ActiveDocument.recompute()
+        except: # if something goes wrong, the object will be deleted, closing the macro (only if FreeCAD library is not loaded)
+            App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
+            App.getDocument(_Doc_).removeObject(new_val)  
+            self.destroy()
+            #################################### Everything described in this part refers to the others part
+#                                                     ****Bottleneck Rimless**** 
         if check_list[3] == 1:        
-            if V_list[2]<V_list[3]:
-                V_list[2]= V_list[1]-V_list[2]
-                print(V_list[2])
+            if V_list[2]<V_list[3]:  # if is available only neck length and not the length from base to neck base 
+                V_list[2]= V_list[1]-V_list[2] # the point is calculated subtracting 'neck length - total length'
             else:
                 pass
             k= V_list[8]-V_list[7]
@@ -506,8 +488,7 @@ class AmmoMaker(QWidget):
             Part.LineSegment(App.Vector(V_list[12], (V_list[4]+V_list[5])), App.Vector(V_list[12], V_list[4])),
             Part.LineSegment(App.Vector(V_list[12], V_list[4]), App.Vector(V_list[13], V_list[4])),
             Part.LineSegment(App.Vector(V_list[13], V_list[4]),App.Vector(V_list[13],0))
-            ]
-            
+            ]           
             ExtConstList = [
             Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Coincident',0,2,1,1),
             Sketcher.Constraint('Coincident',1,2,2,1), Sketcher.Constraint('Coincident',2,2,3,1),
@@ -516,17 +497,17 @@ class AmmoMaker(QWidget):
             Sketcher.Constraint('Vertical',5),Sketcher.Constraint('Horizontal',6),Sketcher.Constraint('Vertical',7),
             Sketcher.Constraint('Coincident',6,2,7,1), Sketcher.Constraint('Coincident', 7,2,8,1),
             ]
+            # if small or large is selected a temporary value get the right constant
             if check_list[0] == 1:    
                 a = sb
             elif check_list[0] == 2:
                 a = lb
-            else:
+            else: # only if the case is not rimmed, an error will occur, otherwise specific values are created
                  self.error_msg.setInformativeText('Rimless cannot be Rimfire')
                  self.error_msg.show()
                  App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
                  App.getDocument(_Doc_).removeObject(new_val)
-
-            if check_list[1] == 0:          
+            if check_list[1] == 0:     # if 'Boxer' is selected all values are fixed for internal parts     
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[13], 0), App.Vector(a, 0))) 
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
@@ -542,12 +523,16 @@ class AmmoMaker(QWidget):
                 ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',13,2,14,1))   
                 ExtConstList.append(Sketcher.Constraint('Coincident',14,2,15,1))  
-                ExtConstList.append(Sketcher.Constraint('Coincident',15,2,0,1))     
-            elif check_list[1] == 1:
+                ExtConstList.append(Sketcher.Constraint('Coincident',15,2,0,1))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',11))   
+            elif check_list[1] == 1: # same thing with 'Berdan' primer
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[13], 0), App.Vector(a, 0))) 
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.ArcOfCircle(Part.Circle(App.Vector(0,2.7,0),App.Vector(0,0,1),1.5),3.141593,4.716321))
+                ExtGeoList.append(berdan_constant)
                 ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector(0, V_list[6])))
                 ExtGeoList.append(Part.LineSegment(App.Vector(0, V_list[6]), App.Vector(a, V_list[6])))
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, V_list[6]), App.Vector(V_list[10]-k, V_list[3]/2)))
@@ -564,15 +549,14 @@ class AmmoMaker(QWidget):
                 ExtConstList.append(Sketcher.Constraint('Coincident',15,2,16,1))  
                 ExtConstList.append(Sketcher.Constraint('Coincident',16,2,17,1))   
                 ExtConstList.append(Sketcher.Constraint('Coincident',17,2,0,1)) 
-                ExtConstList.append(Sketcher.Constraint('PointOnObject',11,2,-2))                
-                print('all constrs done')         
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',12))  
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',11,2,-2))  
+            # adding values for trimming function, it will create a chamfer to the rim base
             trim_vals = 7,8,(V_list[13], V_list[4]/3), (V_list[12],0)
-                #ExtGeoList.append(Part.LineSegment(App.Vector(V_list[12], 0), App.Vector(0, 0)))
-
-######################
-#     Straight Rimless     
-######################   
-#      1  2  3 
+#                                                     ****Straight Rimless****    
         elif check_list[3] == 2:
             ExtGeoList = [
             Part.LineSegment(App.Vector(V_list[5], V_list[1]), App.Vector(V_list[6], V_list[1])),
@@ -585,52 +569,65 @@ class AmmoMaker(QWidget):
             ExtConstList = [
             Sketcher.Constraint('Coincident',0,2,1,1), Sketcher.Constraint('Coincident',1,2,2,1), 
             Sketcher.Constraint('Coincident',2,2,3,1), Sketcher.Constraint('Coincident',3,2,4,1),
-            Sketcher.Constraint('Coincident',4,2,5,1)
+            Sketcher.Constraint('Coincident',4,2,5,1), Sketcher.Constraint('Horizontal',8),
+            Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Vertical',3),
+            Sketcher.Constraint('Horizontal',4), Sketcher.Constraint('Vertical',5)
             ]
-            if check_list[0] == 1:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(sb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 0), App.Vector(sb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4]+1)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]+1), App.Vector(V_list[6]/2 , V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2 , V_list[1]/4), App.Vector(V_list[5], V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/4), App.Vector(V_list[5], V_list[1])))
-                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1)) 
-                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
-                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',11,2,12,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,0,1)) 
+            if check_list[0] == 1:    
+                a = sb
             elif check_list[0] == 2:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(lb, 0)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 0),App.Vector(lb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4]+1)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]+1), App.Vector(V_list[6]/2 , V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2 , V_list[1]/4), App.Vector(V_list[5], V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/4), App.Vector(V_list[5], V_list[1])))
-                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1)) 
-                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
-                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',11,2,12,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,0,1)) 
-            else:
+                a = lb
+            else:  
                  self.error_msg.setInformativeText('Rimless cannot be Rimfire')
                  self.error_msg.show()
                  App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
                  App.getDocument(_Doc_).removeObject(new_val)
+            if check_list[1] == 0:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4]+1)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]+1), App.Vector(V_list[6]/2 , V_list[1]/4)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2 , V_list[1]/4), App.Vector(V_list[5], V_list[1]/4)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/4), App.Vector(V_list[5], V_list[1])))
+                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',11,2,12,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,0,1))    
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))  
+            elif check_list[1] == 1:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(a, 0)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0),App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(berdan_constant)
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector(0, V_list[4]+1)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, V_list[4]+1), App.Vector(a, V_list[4]+1)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, V_list[4]+1), App.Vector(V_list[5] , V_list[1]/4)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/4), App.Vector(V_list[5], V_list[1])))
+                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',11,2,12,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,13,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',13,2,0,1)) 
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',9,2,-2))  
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',10))  
                 #ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(0, 0)))
             trim_vals = 5,6,(V_list[9], V_list[2]/3), (V_list[8],0)
-
-#######################
-#     Bottleneck Rimmed    
-#######################
-#      1  2  3        
+#                                                     ****Bottleneck Rimmed****    
         if check_list[3] == 3:        
             if V_list[2]<V_list[3]:
                 V_list[2]= V_list[1]-V_list[2]
@@ -643,50 +640,18 @@ class AmmoMaker(QWidget):
             Part.LineSegment(App.Vector(V_list[8], V_list[3]), App.Vector(V_list[9], V_list[4])),
             Part.LineSegment(App.Vector(V_list[9], V_list[4]), App.Vector(V_list[10], V_list[4])),
             Part.LineSegment(App.Vector(V_list[10], V_list[4]), App.Vector(V_list[10], 0)),
-            ]
-            
+            ]           
             ExtConstList = [
             Sketcher.Constraint('Coincident',0,2,1,1), Sketcher.Constraint('Coincident',1,2,2,1), 
             Sketcher.Constraint('Coincident',2,2,3,1), Sketcher.Constraint('Coincident',3,2,4,1), 
-            Sketcher.Constraint('Coincident',4,2,5,1)
+            Sketcher.Constraint('Coincident',4,2,5,1),
+            Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Horizontal',4), 
+            Sketcher.Constraint('Vertical',5)
             ]
-            if check_list[0] == 1:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(sb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 0), App.Vector(sb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 2.7), App.Vector(-(4.45/3), 2.7))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 2.7), App.Vector(-(4.45/3), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3])))                
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]), App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2])))                
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2]), App.Vector(V_list[5], V_list[1])))                
-                ExtConstList.append( Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))   
-                ExtConstList.append( Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
-                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1)) 
-                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,13,1))     
-                ExtConstList.append(Sketcher.Constraint('Coincident',13,2,0,1))     
-
+            if check_list[0] == 1:    
+                a = sb
             elif check_list[0] == 2:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(lb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 0), App.Vector(lb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 2.7), App.Vector(-(4.45/3), 2.7))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 2.7), App.Vector(-(4.45/3), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3])))                
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]), App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2])))                
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2]), App.Vector(V_list[5], V_list[1])))                
-                ExtConstList.append( Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))   
-                ExtConstList.append( Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
-                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1)) 
-                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,13,1))     
-                ExtConstList.append(Sketcher.Constraint('Coincident',13,2,0,1))                  
+                a = lb
             else:
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(0, 0)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(0,0), App.Vector(0,  V_list[4]/3)))
@@ -701,12 +666,60 @@ class AmmoMaker(QWidget):
                 ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1)) 
                 ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',11,2,0,1))  
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+            if check_list[1] == 0:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-(a/3)*2, 2.7))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(-(a/3)*2, 2.7), App.Vector(-(a/3)*2, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-(a/3)*2, 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3])))                
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]), App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2])))                
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2]), App.Vector(V_list[5], V_list[1])))                
+                ExtConstList.append( Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))   
+                ExtConstList.append( Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1)) 
+                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,13,1))     
+                ExtConstList.append(Sketcher.Constraint('Coincident',13,2,0,1))   
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))    
+            elif check_list[1] == 1:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7))) 
+                ExtGeoList.append(berdan_constant)
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector(0, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 4.7), App.Vector(a, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]/3)))                
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]/3), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3])))                
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]), App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2])))    
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2]), App.Vector(V_list[5], V_list[1])))                            
+                ExtConstList.append( Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))   
+                ExtConstList.append( Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1)) 
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1)) 
+                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,13,1))     
+                ExtConstList.append(Sketcher.Constraint('Coincident',13,2,14,1))      
+                ExtConstList.append(Sketcher.Constraint('Coincident',14,2,15,1))      
+                ExtConstList.append(Sketcher.Constraint('Coincident',15,2,0,1))     
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',9,2,-2))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',10))                 
             trim_vals = 5,6,(V_list[10], V_list[4]/3), (V_list[9],0)
-
-#######################
-#     Bottleneck Belted
-#######################   
-#      1  2  3     
+#                                                     ****Bottleneck Belted****
         if check_list[3] == 4:        
             if V_list[2]<V_list[3]:
                 V_list[2]= V_list[1]-V_list[2]
@@ -723,67 +736,81 @@ class AmmoMaker(QWidget):
             Part.LineSegment(App.Vector(V_list[13], V_list[5]+ V_list[4]), App.Vector(V_list[13], V_list[4])),
             Part.LineSegment(App.Vector(V_list[13], V_list[4]), App.Vector(V_list[14], V_list[4])),
             Part.LineSegment(App.Vector(V_list[14], V_list[4]), App.Vector(V_list[14], 0))
-            ]
-            
+            ]          
             ExtConstList = [
             Sketcher.Constraint('Coincident',0,2,1,1), Sketcher.Constraint('Coincident',1,2,2,1), 
             Sketcher.Constraint('Coincident',2,2,3,1), Sketcher.Constraint('Coincident',3,2,4,1), 
             Sketcher.Constraint('Coincident',4,2,5,1), Sketcher.Constraint('Coincident',5,2,6,1),
             Sketcher.Constraint('Coincident',6,2,7,1), Sketcher.Constraint('Coincident',7,2,8,1),
-            Sketcher.Constraint('Coincident',8,2,9,1)
+            Sketcher.Constraint('Coincident',8,2,9,1),
+            Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Horizontal',4), 
+            Sketcher.Constraint('Vertical',5), Sketcher.Constraint('Vertical',7), Sketcher.Constraint('Horizontal',8), 
+            Sketcher.Constraint('Vertical',9)
             ]
-            if check_list[0] == 1:
-                k = V_list[8] -V_list[7]
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(sb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 0), App.Vector(sb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[6]), App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6]), App.Vector(V_list[10]-k, V_list[3])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10]-k, V_list[3]), App.Vector(V_list[9]-k, V_list[2])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9]-k, V_list[2]), App.Vector(V_list[7], V_list[1])))               
-                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
-                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
-                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',14,2,15,1))      
-                ExtConstList.append( Sketcher.Constraint('Coincident',15,2,16,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',16,2,17,1))      
-                ExtConstList.append( Sketcher.Constraint('Coincident',17,2,0,1))    
-               
+            if check_list[0] == 1:    
+                a = sb
             elif check_list[0] == 2:
-                k = V_list[8] -V_list[7]
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(lb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 0), App.Vector(lb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[6]), App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6]), App.Vector(V_list[10]-k, V_list[3])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10]-k, V_list[3]), App.Vector(V_list[9]-k, V_list[2])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9]-k, V_list[2]), App.Vector(V_list[7], V_list[1])))               
-                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
-                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
-                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',14,2,15,1))      
-                ExtConstList.append( Sketcher.Constraint('Coincident',15,2,16,1))    
-                ExtConstList.append( Sketcher.Constraint('Coincident',16,2,17,1))      
-                ExtConstList.append( Sketcher.Constraint('Coincident',17,2,0,1))        
+                a = lb
             else:
-                 self.error_msg.setInformativeText('Belted cannot be Rimfire')
+                 self.error_msg.setInformativeText('Rimless cannot be Rimfire')
                  self.error_msg.show()
                  App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
                  App.getDocument(_Doc_).removeObject(new_val)
+            if check_list[1] == 0:
+                k = V_list[8] -V_list[7]
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[6])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[6]), App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6]), App.Vector(V_list[10]-k, V_list[3])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10]-k, V_list[3]), App.Vector(V_list[9]-k, V_list[2])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9]-k, V_list[2]), App.Vector(V_list[7], V_list[1])))               
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
+                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
+                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',14,2,15,1))      
+                ExtConstList.append( Sketcher.Constraint('Coincident',15,2,16,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',16,2,17,1))      
+                ExtConstList.append( Sketcher.Constraint('Coincident',17,2,0,1))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',11))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',12))
+                ExtConstList.append( Sketcher.Constraint('Vertical',13))                   
+            elif check_list[1] == 1:
+                k = V_list[8] -V_list[7]
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(berdan_constant)
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector(0, V_list[6])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, V_list[6]), App.Vector(V_list[12]/2, V_list[6]-(V_list[5]-V_list[4]))))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[12]/2, V_list[6]-(V_list[5]-V_list[4])), App.Vector(V_list[7], V_list[3]/2)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7], V_list[3]/2), App.Vector(V_list[10]-k, V_list[3]) ))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[3]/2), App.Vector(V_list[10]-k, V_list[3])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10]-k, V_list[3]), App.Vector(V_list[9]-k, V_list[2])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9]-k, V_list[2]), App.Vector(V_list[7], V_list[1])))               
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
+                ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
+                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',14,2,15,1))      
+                ExtConstList.append( Sketcher.Constraint('Coincident',15,2,16,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',16,2,17,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',17,2,18,1))    
+                ExtConstList.append( Sketcher.Constraint('Coincident',18,2,19,1))      
+                ExtConstList.append( Sketcher.Constraint('Coincident',19,2,0,1))        
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',13,2,-2))  
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',11))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',12))
+                ExtConstList.append( Sketcher.Constraint('Vertical',14))  
             trim_vals = 9,10,(V_list[14], V_list[4]/3), (V_list[13],0)
-                #ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(0, 0)))
-
-#######################
-#     Straight Belted   
-#######################  
-#      1  2  3 
-        if check_list[3] == 6:     
+#                                                     ****Straight Belted****
+        if check_list[3] == 6:    
             ExtGeoList = [
             Part.LineSegment(App.Vector(V_list[5], V_list[1]), App.Vector(V_list[6], V_list[1])),
             Part.LineSegment(App.Vector(V_list[6], V_list[1]), App.Vector(V_list[7], V_list[4])),
@@ -799,49 +826,64 @@ class AmmoMaker(QWidget):
             Sketcher.Constraint('Coincident',2,2,3,1), Sketcher.Constraint('Coincident',3,2,4,1), 
             Sketcher.Constraint('Coincident',4,2,5,1), Sketcher.Constraint('Coincident',5,2,6,1), 
             Sketcher.Constraint('Coincident',6,2,7,1), Sketcher.Constraint('Coincident',7,2,8,1), 
+            Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Horizontal',2), 
+            Sketcher.Constraint('Vertical',3), Sketcher.Constraint('Vertical',5), 
+            Sketcher.Constraint('Horizontal',6), Sketcher.Constraint('Vertical',7)
             ]
-            if check_list[0] == 1:
-                k = V_list[6] -V_list[5]
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(sb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 0), App.Vector(sb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4]-(V_list[4]/3))))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]-V_list[4]/3),  App.Vector(V_list[7]/2, V_list[4])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]/2, V_list[4]), App.Vector(V_list[7]-k, V_list[4])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-k, V_list[4]), App.Vector(V_list[5], V_list[1])))                 
+            print(check_list[0])
+            if check_list[0] == 1:    
+                a = sb
+            elif check_list[0] == 2:
+                a = lb
+            else:
+                 self.error_msg.setInformativeText('Belted cannot be Rimfire')
+                 self.error_msg.show()
+                 App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
+                 App.getDocument(_Doc_).removeObject(new_val)               
+            if check_list[1] == 0:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]),  App.Vector(V_list[6]/2, V_list[4])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2, V_list[4]), App.Vector(V_list[5], V_list[1]/2)))     
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5], V_list[1]/2), App.Vector(V_list[5], V_list[1])))             
                 ExtConstList.append( Sketcher.Constraint('Coincident',8,2,9,1))
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
                 ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
                 ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
                 ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))       
                 ExtConstList.append( Sketcher.Constraint('Coincident',14,2,0,1))  
-               
-            elif check_list[0] == 2:
-                k = V_list[6] -V_list[5]
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(lb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 0), App.Vector(lb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 2.7), App.Vector(-1.5, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]),  App.Vector(V_list[7]-k, V_list[4])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-k, V_list[4]), App.Vector(V_list[5], V_list[1])))               
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',11)) 
+            elif check_list[1] == 1:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(berdan_constant)
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector(0, V_list[4])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, V_list[4]), App.Vector(V_list[8]/2, V_list[4])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]/2, V_list[4]), App.Vector(V_list[5], V_list[1]/2)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5], V_list[1]/2), App.Vector(V_list[5], V_list[1])))                 
                 ExtConstList.append( Sketcher.Constraint('Coincident',8,2,9,1))
+                ExtConstList.append( Sketcher.Constraint('Coincident',9,2,10,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1))       
                 ExtConstList.append( Sketcher.Constraint('Coincident',11,2,12,1))    
                 ExtConstList.append( Sketcher.Constraint('Coincident',12,2,13,1))       
-                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,0,1))       
-            else:
-                 self.error_msg.setInformativeText('Belted cannot be Rimfire')
-                 self.error_msg.show()
-                 App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
-                 App.getDocument(_Doc_).removeObject(new_val)
-            trim_vals = 7,8,(V_list[9], V_list[2]/3), (V_list[10],0)
-                #ExtGeoList.append(Part.LineSegment(App.Vector(V_list[14], 0), App.Vector(0, 0)))
-
-
-#######################
-#     Straight Rimmed   
-#######################  
-#      1  2  3 
+                ExtConstList.append( Sketcher.Constraint('Coincident',13,2,14,1))       
+                ExtConstList.append( Sketcher.Constraint('Coincident',14,2,15,1))  
+                ExtConstList.append( Sketcher.Constraint('Coincident',15,2,0,1))
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',11,2,-2))  
+                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                ExtConstList.append( Sketcher.Constraint('Vertical',9))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',10))
+                ExtConstList.append( Sketcher.Constraint('Vertical',12))    
+                ExtConstList.append( Sketcher.Constraint('Horizontal',13))        
+            trim_vals = 7,8,(V_list[10], V_list[2]/3), (V_list[9],0)
+#                                                     ****Straigth Rimmed****
         elif check_list[3] == 5:
             ExtGeoList = [
             Part.LineSegment(App.Vector(V_list[3], V_list[1]), App.Vector(V_list[4], V_list[1])),
@@ -851,36 +893,14 @@ class AmmoMaker(QWidget):
             ]
             ExtConstList = [
             Sketcher.Constraint('Coincident',0,2,1,1), Sketcher.Constraint('Coincident',1,2,2,1), 
-            Sketcher.Constraint('Coincident',2,2,3,1)
+            Sketcher.Constraint('Coincident',2,2,3,1),
+            Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Horizontal',2), 
+            Sketcher.Constraint('Vertical',3)
             ]
-            if check_list[0] == 1:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6], 0), App.Vector(sb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 0), App.Vector(sb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(sb, 2.7), App.Vector( -(4.45/3), 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 2.7), App.Vector(-(4.45/3), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(4.45/3), 4.7), App.Vector(V_list[3], 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[3], 4.7), App.Vector(V_list[3], V_list[1])))
-                ExtConstList.append(Sketcher.Constraint('Coincident',3,2,4,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',4,2,5,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,0,1)) 
+            if check_list[0] == 1:    
+                a = sb
             elif check_list[0] == 2:
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6], 0), App.Vector(lb, 0))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 0), App.Vector(lb, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(lb, 2.7), App.Vector( -(5.33/3), 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(5.33/3), 2.7), App.Vector(-(5.33/3), 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(5.33/3), 4.7), App.Vector(V_list[3], 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[3], 4.7), App.Vector(V_list[3], V_list[1])))
-                ExtConstList.append(Sketcher.Constraint('Coincident',3,2,4,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',4,2,5,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1))
-                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,0,1)) 
+                a = lb
             else:
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6], 0), App.Vector(0, 0)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(0, 0), App.Vector( 0, V_list[2]/2)))
@@ -891,9 +911,55 @@ class AmmoMaker(QWidget):
                 ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))   
                 ExtConstList.append(Sketcher.Constraint('Coincident',7,2,0,1))     
-            trim_vals = 3,4,(V_list[6], V_list[2]/3), (V_list[5],0)       
-        
+                ExtConstList.append( Sketcher.Constraint('Horizontal',4))
+                ExtConstList.append( Sketcher.Constraint('Vertical',5))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))      
+            if check_list[1] == 0:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector( (a*2)/3, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector((a*2)/3, 2.7), App.Vector((a*2)/3, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector((a*2)/3, 4.7), App.Vector(V_list[3], 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[3], 4.7), App.Vector(V_list[3], V_list[1])))
+                ExtConstList.append(Sketcher.Constraint('Coincident',3,2,4,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',4,2,5,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,0,1)) 
+                ExtConstList.append( Sketcher.Constraint('Horizontal',4))
+                ExtConstList.append( Sketcher.Constraint('Vertical',5))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',7))      
+            elif check_list[1] == 1:
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6], 0), App.Vector(a, 0))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
+                ExtGeoList.append(berdan_constant)
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 1.2), App.Vector( 0, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(0, 4.7), App.Vector((a*2)/3, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector((a*2)/3, 4.7), App.Vector(V_list[6]/2, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2, 4.7), App.Vector(V_list[3], V_list[1]/2)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[3], V_list[1]/2), App.Vector(V_list[3], V_list[1])))
+                ExtConstList.append(Sketcher.Constraint('Coincident',3,2,4,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',4,2,5,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',8,2,9,1))
+                ExtConstList.append(Sketcher.Constraint('Coincident',9,2,10,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',10,2,11,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',11,2,12,1)) 
+                ExtConstList.append(Sketcher.Constraint('Coincident',12,2,0,1))  
+                ExtConstList.append(Sketcher.Constraint('PointOnObject',7,2,-2))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',4))
+                ExtConstList.append( Sketcher.Constraint('Vertical',5))
+                ExtConstList.append( Sketcher.Constraint('Horizontal',6))
+                ExtConstList.append( Sketcher.Constraint('Vertical',8))         
+            trim_vals = 3,4,(V_list[6], V_list[2]/3), (V_list[5],0)              
         Rev = sketch_name+'_revolution'
+        # Creation of the sketch. If missing a value, a messagebox with error will occur.
         try:
             App.getDocument(_Doc_).getObject(sketch_name).addGeometry(ExtGeoList,False)            
             App.getDocument(_Doc_).getObject(sketch_name).addConstraint(ExtConstList)
@@ -908,9 +974,10 @@ class AmmoMaker(QWidget):
             App.getDocument(_Doc_).getObject(new_val).newObject('PartDesign::Revolution',Rev)
             App.ActiveDocument.recompute()
             FreeCAD.ActiveDocument.recompute()  
-        except:
-            self.error_msg.setText('Error while creating sketch, control data!')
+        except Exception as e:
+            self.error_msg.setText('Error while creating sketch, control data!\n\n'+ str(e))
             self.error_msg.show()
+        # Creating 3D object with revolution of the sketch
         try:
             FreeCAD.getDocument(_Doc_).getObject(Rev).Profile = FreeCAD.getDocument(_Doc_).getObject(sketch_name)
             App.getDocument(_Doc_).getObject(Rev).ReferenceAxis = (App.getDocument(_Doc_).getObject(sketch_name),['V_Axis'])
@@ -926,19 +993,89 @@ class AmmoMaker(QWidget):
             App.getDocument(_Doc_).getObject(Rev).ReferenceAxis = (App.getDocument(_Doc_).getObject(sketch_name), ['V_Axis'])
             App.getDocument(_Doc_).getObject(Rev).Midplane = 0
             App.getDocument(_Doc_).getObject(Rev).Reversed = 0
-            #App.getDocument(_Doc_).recompute()
-            print('[App] recompute')
+            # If the selected primer is 'Berdan' the process will be:
+            #   - Creation of sketch with holes
+            #   - Creation of Pocket 
+            #   - Rename all the sketches avoiding same-name-issues with other objects
+            #   - Render the final object
+            if check_list[1] == 1:
+                # creating temporary variables
+                holes = 'Hole'
+                pocket = 'Pocket'
+                #mirror =  'Mirror'
+                # Process for berdan-like holes creation.
+                # That's not perfect so it have to be postprocessed
+                App.getDocument(_Doc_).getObject(new_val).newObject('Sketcher::SketchObject',holes)
+                XY= [o.Label for o in obj.Origin.OriginFeatures if o.Role == 'XY_Plane'][0]
+                App.getDocument(_Doc_).getObject(holes).Support= (App.getDocument(_Doc_).getObject(XY),[''])
+                App.getDocument(_Doc_).getObject(holes).addGeometry(Part.Circle(App.Vector(1.5,0,0),App.Vector(0,0,1),0.5),False)
+                App.getDocument(_Doc_).getObject(holes).addConstraint(Sketcher.Constraint('PointOnObject',0,3,-1)) 
+                App.getDocument(_Doc_).getObject(holes).addGeometry(Part.Circle(App.Vector(-1.5,0,0),App.Vector(0,0,1),0.5),False)
+                App.getDocument(_Doc_).getObject(holes).addConstraint(Sketcher.Constraint('PointOnObject',1,3,-1)) 
+                App.getDocument(_Doc_).getObject(holes).MapMode = 'FlatFace'
+                App.getDocument(_Doc_).getObject(new_val).newObject('PartDesign::Pocket',pocket)
+                App.getDocument(_Doc_).getObject(pocket).Profile = App.getDocument(_Doc_).getObject(holes)
+                App.getDocument(_Doc_).getObject(pocket).Length = 15
+                App.ActiveDocument.recompute()
+                App.getDocument(_Doc_).getObject(pocket).ReferenceAxis = (App.getDocument(_Doc_).getObject(holes),['N_Axis'])
+                App.getDocument(_Doc_).getObject(holes).Visibility = False
+                App.ActiveDocument.recompute()
+                App.getDocument(_Doc_).getObject(pocket).ViewObject.ShapeColor=getattr(App.getDocument(_Doc_).getObject(Rev).getLinkedObject(True).ViewObject,'ShapeColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.ShapeColor)
+                App.getDocument(_Doc_).getObject(pocket).ViewObject.LineColor=getattr(App.getDocument(_Doc_).getObject(Rev).getLinkedObject(True).ViewObject,'LineColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.LineColor)
+                App.getDocument(_Doc_).getObject(pocket).ViewObject.PointColor=getattr(App.getDocument(_Doc_).getObject(Rev).getLinkedObject(True).ViewObject,'PointColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.PointColor)
+                App.getDocument(_Doc_).getObject(pocket).ViewObject.Transparency=getattr(App.getDocument(_Doc_).getObject(Rev).getLinkedObject(True).ViewObject,'Transparency',App.getDocument(_Doc_).getObject(pocket).ViewObject.Transparency)
+                App.getDocument(_Doc_).getObject(pocket).ViewObject.DisplayMode=getattr(App.getDocument(_Doc_).getObject(Rev).getLinkedObject(True).ViewObject,'DisplayMode',App.getDocument(_Doc_).getObject(pocket).ViewObject.DisplayMode)
+                Gui.getDocument(_Doc_).setEdit(App.getDocument(_Doc_).getObject(new_val), 0, pocket+'.')
+                Gui.Selection.clearSelection()                
+                App.getDocument(_Doc_).getObject(pocket).UseCustomVector = 0
+                App.getDocument(_Doc_).getObject(pocket).Direction = (0, 0, 1)
+                App.getDocument(_Doc_).getObject(pocket).ReferenceAxis = (App.getDocument(_Doc_).getObject(holes), ['N_Axis'])
+                App.getDocument(_Doc_).getObject(pocket).AlongSketchNormal = 1
+                App.getDocument(_Doc_).getObject(pocket).Type = 1
+                App.getDocument(_Doc_).getObject(pocket).UpToFace = None
+                App.getDocument(_Doc_).getObject(pocket).Reversed = 0
+                App.getDocument(_Doc_).getObject(pocket).Midplane = 1
+                App.getDocument(_Doc_).getObject(pocket).Offset = 0
+                App.getDocument(_Doc_).recompute()
+                App.getDocument(_Doc_).getObject(Rev).Visibility = False
+                Gui.getDocument(_Doc_).resetEdit()
+                App.getDocument(_Doc_).getObject(holes).Visibility = True
+                # This part contain the script for mirroring the pocket (useless after have corrected the pocket)
+                #App.getDocument(_Doc_).getObject(new_val).newObject('PartDesign::Mirrored',mirror)
+                #App.getDocument(_Doc_).getObject(mirror).MirrorPlane = (App.getDocument(_Doc_).getObject(holes), ['V_Axis'])
+                #App.getDocument(_Doc_).getObject(mirror).ViewObject.ShapeColor=getattr(App.getDocument(_Doc_).getObject(pocket).getLinkedObject(True).ViewObject,'ShapeColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.ShapeColor)
+                #App.getDocument(_Doc_).getObject(mirror).ViewObject.LineColor=getattr(App.getDocument(_Doc_).getObject(pocket).getLinkedObject(True).ViewObject,'LineColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.LineColor)
+                #App.getDocument(_Doc_).getObject(mirror).ViewObject.PointColor=getattr(App.getDocument(_Doc_).getObject(pocket).getLinkedObject(True).ViewObject,'PointColor',App.getDocument(_Doc_).getObject(pocket).ViewObject.PointColor)
+                #App.getDocument(_Doc_).getObject(mirror).ViewObject.Transparency=getattr(App.getDocument(_Doc_).getObject(pocket).getLinkedObject(True).ViewObject,'Transparency',App.getDocument(_Doc_).getObject(pocket).ViewObject.Transparency)
+                #App.getDocument(_Doc_).getObject(mirror).ViewObject.DisplayMode=getattr(App.getDocument(_Doc_).getObject(pocket).getLinkedObject(True).ViewObject,'DisplayMode',App.getDocument(_Doc_).getObject(pocket).ViewObject.DisplayMode)
+                #Gui.getDocument(_Doc_).setEdit(App.getDocument(_Doc_).getObject(new_val), 0, mirror+'.')
+                Gui.Selection.clearSelection()
+                #App.getDocument(_Doc_).getObject(new_val).Tip = App.getDocument(_Doc_).getObject(mirror)
+                #FreeCAD.getDocument(_Doc_).getObject(mirror).Originals = FreeCAD.getDocument(_Doc_).getObject(pocket)
+                App.getDocument(_Doc_).getObject(pocket).Visibility = True
+                #App.getDocument(_Doc_).getObject(mirror).Visibility = True
+                App.getDocument(_Doc_).getObject(holes).Label = V_list[0]+'_hole'
+                App.getDocument(_Doc_).getObject(pocket).Label = V_list[0]+'_pocket'
+                #App.getDocument(_Doc_).getObject(mirror).Label = V_list[0]+'_mirror'
+                App.ActiveDocument.recompute()
+                Gui.getDocument(_Doc_).resetEdit() 
+            else:
+                App.getDocument(_Doc_).getObject(rev).Visibility = True
+            Gui.activateView('Gui::View3DInventor', True) 
             #Gui.getDocument(_Doc_).resetEdit()
             App.getDocument(_Doc_).getObject(sketch_name).Visibility = False
+            # Golden color
             Gui.getDocument(_Doc_).getObject(new_val).ShapeColor=(0.7803999781608582, 0.5685999989509583, 0.1137000024318695, 0.0)            # Gold color        
             FreeCAD.ActiveDocument.recompute()    
+            Gui.getDocument(_Doc_).resetEdit()
+            # Shaded view
             Gui.runCommand('Std_DrawStyle',5)  
-            print('[FreeCAD] recompute')
-        except:
-            self.error_msg.setText('Error while creating 3D object, control the sketch!')
+        except Exception as e:
+            self.error_msg.setText('Error while creating 3D object, control the sketch!\n'+ str(e))
             self.error_msg.show()
-            
-
-# Chiamare la funzione per creare l'oggetto
+        App.getDocument(_Doc_).getObject(new_val).Label = V_list[0]
+        App.getDocument(_Doc_).getObject(sketch_name).Label = V_list[0]+'_sketch'
+        App.getDocument(_Doc_).getObject(Rev).Label = V_list[0]+'_revolution'
+####################################################################
 if __name__ == '__main__':
     window = AmmoMaker()
