@@ -33,7 +33,7 @@ V_list = ['', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 check_list = [1, 0, 0, 1, 0, 0]
 # other values
 trim_vals = 0,
-n = 0
+n, x = 0, 0
 # if FreeCAD library is not loaded try again, and if it doesn't for the second time, a message will occur
 # If it doesn't load the library reopening the macro, the user have to create a fake object and,
 # in the next opening, it will be possible to operate 
@@ -441,6 +441,7 @@ class AmmoMaker(QWidget):
             check_list[0] = 0
             check_list[1] = -1           
     def get_elements(self):
+        global x
     # Automatic conversion mm - inches:
     # If an element length is less than a costant (6) there is an automatic measurements conversion
         if V_list[1] < 6:
@@ -448,12 +449,22 @@ class AmmoMaker(QWidget):
                 V_list[i] = V_list[i]*25.4
         ints=[str(i) for i in range(10)]
         if (V_list[0][:1]=='.') or (V_list[0][:1] in ints ) or (V_list[0] == '') :  
-            new_val =  'Cartridge'
+#    This part will avoid same name issue 
+#    used for object and sketch with a temporary list
+            temp_list = []
+            for object in Gui.ActiveDocument.Document.Objects:
+                if object.TypeId == 'PartDesign::Body':
+                    temp_list.append(str(object.Name))
+            new_val = temp_list[-1] + str(x)
         else:
             new_val = V_list[0]
         try:
+            temp_list = []
+            for object in Gui.ActiveDocument.Document.Objects:
+                if object.TypeId == 'Sketcher::SketchObject':
+                    temp_list.append(str(object.Name))
             obj = App.activeDocument().addObject("PartDesign::Body",new_val)
-            sketch_name= obj.Label+'_base'
+            sketch_name= temp_list[-1]+str(x)
             #Gui.ActiveDocument.ActiveView.getActiveObject('pdbody')
             Gui.activeView().setActiveObject('pdbody',obj)
             Gui.Selection.clearSelection()
@@ -492,9 +503,9 @@ class AmmoMaker(QWidget):
             ExtConstList = [
             Sketcher.Constraint('Horizontal',0), Sketcher.Constraint('Coincident',0,2,1,1),
             Sketcher.Constraint('Coincident',1,2,2,1), Sketcher.Constraint('Coincident',2,2,3,1),
-            Sketcher.Constraint('Vertical',3), Sketcher.Constraint('Coincident',3,2,4,1), 
+            Sketcher.Constraint('Vertical',5), Sketcher.Constraint('Coincident',3,2,4,1), 
             Sketcher.Constraint('Coincident',4,2,5,1), Sketcher.Constraint('Coincident',5,2,6,1),
-            Sketcher.Constraint('Vertical',5),Sketcher.Constraint('Horizontal',6),Sketcher.Constraint('Vertical',7),
+            Sketcher.Constraint('Horizontal',6),Sketcher.Constraint('Vertical',7),
             Sketcher.Constraint('Coincident',6,2,7,1), Sketcher.Constraint('Coincident', 7,2,8,1),
             ]
             # if small or large is selected a temporary value get the right constant
@@ -996,12 +1007,12 @@ class AmmoMaker(QWidget):
             # If the selected primer is 'Berdan' the process will be:
             #   - Creation of sketch with holes
             #   - Creation of Pocket 
-            #   - Rename all the sketches avoiding same-name-issues with other objects
+            #   - Rename all the sketches avoiding same-label-issues with other objects
             #   - Render the final object
             if check_list[1] == 1:
                 # creating temporary variables
-                holes = 'Hole'
-                pocket = 'Pocket'
+                holes = 'Hole_'+str(x)
+                pocket = 'Pocket_'+str(x)
                 #mirror =  'Mirror'
                 # Process for berdan-like holes creation.
                 # That's not perfect so it have to be postprocessed
@@ -1058,18 +1069,22 @@ class AmmoMaker(QWidget):
                 App.getDocument(_Doc_).getObject(pocket).Label = V_list[0]+'_pocket'
                 #App.getDocument(_Doc_).getObject(mirror).Label = V_list[0]+'_mirror'
                 App.ActiveDocument.recompute()
-                Gui.getDocument(_Doc_).resetEdit() 
+                Gui.getDocument(_Doc_).resetEdit()
             else:
-                App.getDocument(_Doc_).getObject(Rev).Visibility = True
+                 App.getDocument(_Doc_).getObject(Rev).Visibility = True
             Gui.activateView('Gui::View3DInventor', True) 
             #Gui.getDocument(_Doc_).resetEdit()
             App.getDocument(_Doc_).getObject(sketch_name).Visibility = False
             # Golden color
-            Gui.getDocument(_Doc_).getObject(new_val).ShapeColor=(0.7803999781608582, 0.5685999989509583, 0.1137000024318695, 0.0)            # Gold color        
+            Gui.ActiveDocument.ActiveObject.ShapeColor=(0.7803999781608582, 0.5685999989509583, 0.1137000024318695, 0.0)            # Gold color        
+            Gui.ActiveDocument.ActiveObject.LineColor = (0.09803921729326248, 0.09803921729326248, 0.09803921729326248, 0.0)   # LineColor  
+            Gui.ActiveDocument.ActiveObject.DiffuseColor = (0.7803999781608582, 0.5685999989509583, 0.1137000024318695, 0.0)# DiffuseColor       
+            Gui.ActiveDocument.ActiveObject.ShapeMaterial.SpecularColor = (0.8,0.8,0.8)
             FreeCAD.ActiveDocument.recompute()    
             Gui.getDocument(_Doc_).resetEdit()
             # Shaded view
             Gui.runCommand('Std_DrawStyle',5)  
+            x+=1
         except Exception as e:
             self.error_msg.setText('Error while creating 3D object, control the sketch!\n'+ str(e))
             self.error_msg.show()
