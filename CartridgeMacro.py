@@ -1060,7 +1060,7 @@ class AmmoMaker(QWidget):
                 App.ActiveDocument.recompute()
                 Gui.getDocument(_Doc_).resetEdit() 
             else:
-                App.getDocument(_Doc_).getObject(rev).Visibility = True
+                App.getDocument(_Doc_).getObject(Rev).Visibility = True
             Gui.activateView('Gui::View3DInventor', True) 
             #Gui.getDocument(_Doc_).resetEdit()
             App.getDocument(_Doc_).getObject(sketch_name).Visibility = False
