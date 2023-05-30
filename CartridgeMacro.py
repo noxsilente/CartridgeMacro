@@ -1039,7 +1039,7 @@ class AmmoMaker(QWidget):
                 App.getDocument(_Doc_).recompute()
                 App.getDocument(_Doc_).getObject(Rev).Visibility = False
                 Gui.getDocument(_Doc_).resetEdit()
-                App.getDocument(_Doc_).getObject(holes).Visibility = True
+                #App.getDocument(_Doc_).getObject(holes).Visibility = True
                 # This part contain the script for mirroring the pocket (useless after have corrected the pocket)
                 #App.getDocument(_Doc_).getObject(new_val).newObject('PartDesign::Mirrored',mirror)
                 #App.getDocument(_Doc_).getObject(mirror).MirrorPlane = (App.getDocument(_Doc_).getObject(holes), ['V_Axis'])
