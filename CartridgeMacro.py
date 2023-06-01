@@ -456,7 +456,7 @@ class AmmoMaker(QWidget):
         if self.clearb.isChecked():
             selected_class.clear(selected_class)
         if (self.form1.isChecked()): #Bottleneck
-              selected_class = Bottleneck
+            selected_class = Bottleneck
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(Bottleneck(), 1, 0)
             check_list[3] = 1
