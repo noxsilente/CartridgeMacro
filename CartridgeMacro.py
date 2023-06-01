@@ -17,10 +17,13 @@
 #      
 # I tried to make the script easier using my knowledge --- Cleaned for having less lines of code as possible
 # First version: 15/04/2023 (DD/MM/YYYY)
+# Version changes:
+#    - From 0.1 to 0.4: Fixes working methods and some issues
+#    - 0.5: Added 'Clear' button used to clear edit lines
 #################################################################################################
 __Title__ = "CartridgeMacro"
-__Version__ = "0.3"
-__Date__     = "30/05/2023" #DD/MM/YYYY
+__Version__ = "0.5"
+__Date__     = "01/06/2023" #DD/MM/YYYY
 
 # importing libraries
 import FreeCAD
@@ -34,6 +37,7 @@ check_list = [1, 0, 0, 1, 0, 0]
 # other values
 trim_vals = 0,
 n, x = 0, 0
+selected_class = classmethod
 # if FreeCAD library is not loaded try again, and if it doesn't for the second time, a message will occur
 # If it doesn't load the library reopening the macro, the user have to create a fake object and,
 # in the next opening, it will be possible to operate 
@@ -74,14 +78,22 @@ class Bottleneck(QWidget):
     def __init__(self):
         super(Bottleneck, self).__init__()
         def get_values():
-        #    First value = name of the object. If no name is given it will be 'NoName'
-        #    First range values = Diameter dimensions. 
+        #    First Value = name of the object. If no name is given it will be 'NoName'
+        #    First 'if' = Diameter dimensions. 
         #                                 They are half of the value and in the negative side of the plane (not essensial choice)
-        #    Second range values = Length dimensions.
+        #    Second 'if' = Length dimensions.
         #                                They are intended just to define the lengths of the object
+        #    Third 'if' = Constant Rim length.
+        #    Fourth 'if' = Constant Internal rim length
+        # for other classes there are only 1 or 2 of the following 'if' statements
+        # NOTE: they are inserted only if no value is given
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             if (v_list[9].text() == '') or (v_list[9]=='0'):
                 v_list[9] = v_list[8]
+            if (v_list[4].text()=='') or (v_list[4]=='0'):
+                v_list[4].insert('1.27')
+            if (v_list[5].text()=='') or (v_list[5]=='0'):
+                v_list[5].insert('1')
             for i in range(1,7):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
             for i in range(7,14):
@@ -120,6 +132,10 @@ class Bottleneck(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                        #BOTTLENECK - RIMMMED
 ####################################################################################
@@ -131,6 +147,8 @@ class B_Rimmed(QWidget):
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             if (v_list[7].text() == '') or (v_list[7]=='0'):
                 v_list[7] = v_list[6]
+            if (v_list[4].text()=='') or (v_list[4]=='0'):
+                v_list[4].insert('1.27')
             for i in range(1,5):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
             for i in range(5,11):
@@ -160,6 +178,10 @@ class B_Rimmed(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                        BOTTLENECK - BELTED
 ####################################################################################
@@ -171,6 +193,10 @@ class B_Belted(QWidget):
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName'
             if (v_list[9].text() == '') or (v_list[9]=='0'):
                 v_list[9] = v_list[8]
+            if (v_list[4].text()=='') or (v_list[4]=='0'):
+                v_list[4].insert('1.27')
+            if (v_list[5].text()=='') or (v_list[5]=='0'):
+                v_list[5].insert('1')
             for i in range(1,7):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
             for i in range(7,15):
@@ -200,6 +226,10 @@ class B_Belted(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                        STRAIGHT - RIMMED
 ####################################################################################
@@ -209,6 +239,8 @@ class S_Rimmed(QWidget):
         def get_values():
             if (v_list[5].text() == '') or (v_list[5]=='0'):
                 v_list[5] = v_list[4]
+            if (v_list[2].text()=='') or (v_list[2]=='0'):
+                v_list[2].insert('1.27')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             V_list[1] = float(v_list[1].text()) if v_list[1].text() !='' else '0'
@@ -240,6 +272,10 @@ class S_Rimmed(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                            STRAIGHT
 ####################################################################################
@@ -249,6 +285,10 @@ class Straight(QWidget):
         def get_values():
             if (v_list[7].text() == '') or (v_list[7]=='0'):
                 v_list[7] = v_list[6]
+            if (v_list[2].text()=='') or (v_list[2]=='0'):
+                v_list[2].insert('1.27')
+            if (v_list[3].text()=='') or (v_list[3]=='0'):
+                v_list[3].insert('1')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             for i in range(1,5):
@@ -284,6 +324,10 @@ class Straight(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                        STRAIGHT BELTED
 ####################################################################################
@@ -293,6 +337,10 @@ class B_Straight(QWidget):
         def get_values():
             if (v_list[7].text() == '') or (v_list[7]=='0'):
                 v_list[7] = v_list[6]
+            if (v_list[2].text()=='') or (v_list[3]=='0'):
+                v_list[2].insert('1.27')
+            if (v_list[3].text()=='') or (v_list[3]=='0'):
+                v_list[3].insert('1')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             for i in range(1,5):
@@ -324,6 +372,10 @@ class B_Straight(QWidget):
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
+    def clear(self):
+        global v_list
+        for i in range(length(v_list)):
+            v_list[i].insert('')
 ####################################################################################
 #                                        MAIN CLASS
 ####################################################################################
@@ -352,6 +404,7 @@ class AmmoMaker(QWidget):
         self.form4 = QRadioButton('Belted')
         self.form5 = QRadioButton('Rimmed')
         self.form6 = QRadioButton('Belted')
+        self.clearb = QPushButton('Clear')
 # connecting the buttons to specific functions
         self.ck1.clicked.connect(self.check)
         self.ck2.clicked.connect(self.check)
@@ -376,18 +429,21 @@ class AmmoMaker(QWidget):
         self.gp2.addWidget(self.opt3, 1, 0)
         self.gp3.addWidget(self.ck1, 0, 0)
         self.gp3.addWidget(self.ck2, 0, 1)
+        self.gp3.addWidget(self.clearb, 1, 1)
 # defining an error message which will raise if a sketch or an object is unable to be created
         self.error_msg = QMessageBox()
         self.error_msg.setIcon(QMessageBox.Critical)
         self.error_msg.setText('Wrong settings')
         self.error_msg.setWindowTitle('Error')
         self.group_layout = QGridLayout(self.group)
-        self.button = QPushButton('Crea!')
+        self.button = QPushButton('Create!')
+        self.clearb.clicked.connect(self.class_value)
         self.button.clicked.connect(self.get_elements)
         self.group_layout.addWidget(self.group, 0, 0)
         self.group_layout.addWidget(self.group2, 0, 1)
         self.group_layout.addWidget(self.group3, 1, 1)
         self.group_layout.addWidget(self.button, 2, 1)
+        #self.group_layout.addWidget(self.clearb, 0, 2)
         self.group_layout.addWidget(Bottleneck(), 1, 0)
         self.setLayout(self.group_layout)
         if n == 1:
@@ -397,27 +453,35 @@ class AmmoMaker(QWidget):
         self.show()
 # if a cartridge class is called, the last element of the grid will be deleted recreating the wanted class' offset
     def class_value(self):
-        if (self.form1.isChecked()): #Bottleneck  
+        if self.clearb.isChecked():
+            selected_class.clear(selected_class)
+        if (self.form1.isChecked()): #Bottleneck
+              selected_class = Bottleneck
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(Bottleneck(), 1, 0)
             check_list[3] = 1
         elif (self.form2.isChecked()): #Straight
+            selected_class = Straight
             check_list[3] = 2
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(Straight(), 1, 0)
         elif(self.form3.isChecked()):  #Bottleneck_Rimmed
+            selected_class = B_Rimmed
             check_list[3] = 3
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(B_Rimmed(), 1,0)
         elif(self.form4.isChecked()):  #Bottleneck_Belted
+            selected_class = B_Belted
             check_list[3] = 4
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(B_Belted(), 1,0)
         elif(self.form5.isChecked()):  #Straight_Rimmed
             check_list[3] = 5
+            selected_class = S_Rimmed
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(S_Rimmed(), 1,0)        
         elif(self.form6.isChecked()):  #Straight_Belted
+            selected_class = B_Straight
             check_list[3] = 6
             self.group_layout.itemAt(4).widget().deleteLater()
             self.group_layout.addWidget(B_Straight(), 1,0)
@@ -447,6 +511,8 @@ class AmmoMaker(QWidget):
         if V_list[1] < 6:
             for i in range(1,len(V_list)):
                 V_list[i] = V_list[i]*25.4
+            print('Automatic conversion inch - mm')
+            print(V_list)
         ints=[str(i) for i in range(10)]
         if (V_list[0][:1]=='.') or (V_list[0][:1] in ints ) or (V_list[0] == '') :  
 #    This part will avoid same name issue 
@@ -455,7 +521,10 @@ class AmmoMaker(QWidget):
             for object in Gui.ActiveDocument.Document.Objects:
                 if object.TypeId == 'PartDesign::Body':
                     temp_list.append(str(object.Name))
-            new_val = temp_list[-1] + str(x)
+            if len(temp_list) == 0:
+                new_val = 'Body'
+            else:
+                new_val = temp_list[-1] + str(x)
         else:
             new_val = V_list[0]
         try:
@@ -523,8 +592,8 @@ class AmmoMaker(QWidget):
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[6]), App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6])))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[11]-(V_list[10]-V_list[9]), V_list[6]), App.Vector(V_list[10]-k, V_list[3])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[6]), App.Vector(V_list[7], V_list[6])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7], V_list[6]), App.Vector(V_list[10]-k, V_list[3])))
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10]-k, V_list[3]), App.Vector(V_list[9]-k, V_list[2])))
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9]-k, V_list[2]), App.Vector(V_list[7], V_list[1])))
                 ExtConstList.append( Sketcher.Constraint('Coincident',8,2,9,1))
@@ -612,7 +681,7 @@ class AmmoMaker(QWidget):
                 ExtConstList.append( Sketcher.Constraint('Horizontal',6))
                 ExtConstList.append( Sketcher.Constraint('Vertical',7))
                 ExtConstList.append( Sketcher.Constraint('Horizontal',8))
-                ExtConstList.append( Sketcher.Constraint('Vertical',9))  
+                #ExtConstList.append( Sketcher.Constraint('Vertical',9))  
             elif check_list[1] == 1:
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(a, 0)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 0),App.Vector(a, 2.7)))
@@ -683,9 +752,9 @@ class AmmoMaker(QWidget):
             if check_list[1] == 0:
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[10], 0), App.Vector(a, 0))) 
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 0), App.Vector(a, 2.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-(a/3)*2, 2.7))) 
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(a/3)*2, 2.7), App.Vector(-(a/3)*2, 4.7)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(-(a/3)*2, 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector((a/3)*2, 2.7))) 
+                ExtGeoList.append(Part.LineSegment(App.Vector((a/3)*2, 2.7), App.Vector((a/3)*2, 4.7)))
+                ExtGeoList.append(Part.LineSegment(App.Vector((a/3)*2, 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[6]), 4.7), App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3])))                
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[8]-(V_list[7]-V_list[5]), V_list[3]), App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2])))                
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[7]-(V_list[7]-V_list[5]), V_list[2]), App.Vector(V_list[5], V_list[1])))                
