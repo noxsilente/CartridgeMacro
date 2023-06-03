@@ -20,10 +20,12 @@
 # Version changes:
 #    - From 0.1 to 0.4: Fixes working methods and some issues
 #    - 0.5: Added 'Clear' button used to clear edit lines
+#    - 0.6: Changed straight rimless internal geomety
+#        - 0.6.1: Changed button design
 #################################################################################################
 __Title__ = "CartridgeMacro"
-__Version__ = "0.5"
-__Date__     = "01/06/2023" #DD/MM/YYYY
+__Version__ = "0.6.1"
+__Date__     = "03/06/2023" #DD/MM/YYYY
 
 # importing libraries
 import FreeCAD
@@ -90,9 +92,9 @@ class Bottleneck(QWidget):
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
             if (v_list[9].text() == '') or (v_list[9]=='0'):
                 v_list[9] = v_list[8]
-            if (v_list[4].text()=='') or (v_list[4]=='0'):
+            if (v_list[4].text()=='') or (v_list[4]=='0.00'):
                 v_list[4].insert('1.27')
-            if (v_list[5].text()=='') or (v_list[5]=='0'):
+            if (v_list[5].text()=='') or (v_list[5]=='0.00'):
                 v_list[5].insert('1')
             for i in range(1,7):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
@@ -127,8 +129,9 @@ class Bottleneck(QWidget):
         Hlayout.addWidget(v_list[-1])
         layout.addLayout(Hlayout, 13, 0)
         # adding the group (BoxLayout) to the widget
-        Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        Vlayout.addWidget(group)                  
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -145,9 +148,9 @@ class B_Rimmed(QWidget):
         def get_values():
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
-            if (v_list[7].text() == '') or (v_list[7]=='0'):
+            if (v_list[7].text() == '') or (v_list[7]=='0.00'):
                 v_list[7] = v_list[6]
-            if (v_list[4].text()=='') or (v_list[4]=='0'):
+            if (v_list[4].text()=='') or (v_list[4]=='0.00'):
                 v_list[4].insert('1.27')
             for i in range(1,5):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
@@ -173,8 +176,9 @@ class B_Rimmed(QWidget):
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
             layout.addLayout(Hlayout,i,0) 
-        Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        Vlayout.addWidget(group)                    
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")  
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -193,9 +197,9 @@ class B_Belted(QWidget):
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName'
             if (v_list[9].text() == '') or (v_list[9]=='0'):
                 v_list[9] = v_list[8]
-            if (v_list[4].text()=='') or (v_list[4]=='0'):
+            if (v_list[4].text()=='') or (v_list[4]=='0.00'):
                 v_list[4].insert('1.27')
-            if (v_list[5].text()=='') or (v_list[5]=='0'):
+            if (v_list[5].text()=='') or (v_list[5]=='0.00'):
                 v_list[5].insert('1')
             for i in range(1,7):
                 V_list[i] = float(v_list[i].text()) if v_list[i].text() !='' else '0'
@@ -221,8 +225,9 @@ class B_Belted(QWidget):
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
             layout.addLayout(Hlayout,i,0)  
-        Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        Vlayout.addWidget(group)                 
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")    
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -239,7 +244,7 @@ class S_Rimmed(QWidget):
         def get_values():
             if (v_list[5].text() == '') or (v_list[5]=='0'):
                 v_list[5] = v_list[4]
-            if (v_list[2].text()=='') or (v_list[2]=='0'):
+            if (v_list[2].text()=='') or (v_list[2]=='0.00'):
                 v_list[2].insert('1.27')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
@@ -267,8 +272,9 @@ class S_Rimmed(QWidget):
             Hlayout.addWidget(l_list[i+1])
             Hlayout.addWidget(v_list[i+1])
             layout.addLayout(Hlayout,i,0)  
-        Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        Vlayout.addWidget(group)                 
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")    
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -285,9 +291,9 @@ class Straight(QWidget):
         def get_values():
             if (v_list[7].text() == '') or (v_list[7]=='0'):
                 v_list[7] = v_list[6]
-            if (v_list[2].text()=='') or (v_list[2]=='0'):
+            if (v_list[2].text()=='') or (v_list[2]=='0.00'):
                 v_list[2].insert('1.27')
-            if (v_list[3].text()=='') or (v_list[3]=='0'):
+            if (v_list[3].text()=='') or (v_list[3]=='0.00'):
                 v_list[3].insert('1')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
@@ -319,8 +325,9 @@ class Straight(QWidget):
         Hlayout.addWidget(l_list[-1])
         Hlayout.addWidget(v_list[-1])
         layout.addLayout(Hlayout, 8,0 )
-        Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        Vlayout.addWidget(group)                 
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")     
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -337,9 +344,9 @@ class B_Straight(QWidget):
         def get_values():
             if (v_list[7].text() == '') or (v_list[7]=='0'):
                 v_list[7] = v_list[6]
-            if (v_list[2].text()=='') or (v_list[3]=='0'):
+            if (v_list[2].text()=='') or (v_list[3]=='0.00'):
                 v_list[2].insert('1.27')
-            if (v_list[3].text()=='') or (v_list[3]=='0'):
+            if (v_list[3].text()=='') or (v_list[3]=='0.00'):
                 v_list[3].insert('1')
             print(check_list)
             V_list[0] = v_list[0].text() if v_list[0].text() != '' else 'NoName' 
@@ -368,7 +375,8 @@ class B_Straight(QWidget):
             Hlayout.addWidget(v_list[i+1])
             layout.addLayout(Hlayout,i,0)  
         Vlayout.addWidget(group)               
-        button = QPushButton('OK')     
+        button = QPushButton('Get Data')     
+        button.setStyleSheet("QPushButton { height: 20px; background-color: #fff; color: #700; border: 1px solid #700} QPushButton::pressed{background-color: #700; color: white; border: 1px solid white}")
         button.clicked.connect(get_values)
         Vlayout.addWidget(button) 
         self.setLayout(Vlayout)
@@ -405,6 +413,7 @@ class AmmoMaker(QWidget):
         self.form5 = QRadioButton('Rimmed')
         self.form6 = QRadioButton('Belted')
         self.clearb = QPushButton('Clear')
+        self.clearb.setStyleSheet("QPushButton {width:80px; height: 20px; background-color: #fff; color: black; border: 1px solid black} QPushButton::pressed{background-color: #000; color: white; border: 1px solid white}")
 # connecting the buttons to specific functions
         self.ck1.clicked.connect(self.check)
         self.ck2.clicked.connect(self.check)
@@ -437,6 +446,8 @@ class AmmoMaker(QWidget):
         self.error_msg.setWindowTitle('Error')
         self.group_layout = QGridLayout(self.group)
         self.button = QPushButton('Create!')
+        self.button.setStyleSheet("QPushButton {width:90px; height: 20px; background-color: #fff; color: #060; border: 1px solid #060} QPushButton::pressed{background-color: #060; color: #fff; border: 1px solid #fff}")
+
         self.clearb.clicked.connect(self.class_value)
         self.button.clicked.connect(self.get_elements)
         self.group_layout.addWidget(self.group, 0, 0)
@@ -444,6 +455,7 @@ class AmmoMaker(QWidget):
         self.group_layout.addWidget(self.group3, 1, 1)
         self.group_layout.addWidget(self.button, 2, 1)
         #self.group_layout.addWidget(self.clearb, 0, 2)
+        self.group_layout.addWidget(QLabel('V. ' +__Version__), 2,0)
         self.group_layout.addWidget(Bottleneck(), 1, 0)
         self.setLayout(self.group_layout)
         if n == 1:
@@ -457,33 +469,33 @@ class AmmoMaker(QWidget):
             selected_class.clear(selected_class)
         if (self.form1.isChecked()): #Bottleneck
             selected_class = Bottleneck
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(Bottleneck(), 1, 0)
             check_list[3] = 1
         elif (self.form2.isChecked()): #Straight
             selected_class = Straight
             check_list[3] = 2
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(Straight(), 1, 0)
         elif(self.form3.isChecked()):  #Bottleneck_Rimmed
             selected_class = B_Rimmed
             check_list[3] = 3
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(B_Rimmed(), 1,0)
         elif(self.form4.isChecked()):  #Bottleneck_Belted
             selected_class = B_Belted
             check_list[3] = 4
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(B_Belted(), 1,0)
         elif(self.form5.isChecked()):  #Straight_Rimmed
             check_list[3] = 5
             selected_class = S_Rimmed
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(S_Rimmed(), 1,0)        
         elif(self.form6.isChecked()):  #Straight_Belted
             selected_class = B_Straight
             check_list[3] = 6
-            self.group_layout.itemAt(4).widget().deleteLater()
+            self.group_layout.itemAt(5).widget().deleteLater()
             self.group_layout.addWidget(B_Straight(), 1,0)
 
     def check(self):
@@ -668,8 +680,8 @@ class AmmoMaker(QWidget):
                 ExtGeoList.append(Part.LineSegment(App.Vector(a, 2.7), App.Vector(-1.5, 2.7)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, 2.7), App.Vector(-1.5, V_list[4]+1)))
                 ExtGeoList.append(Part.LineSegment(App.Vector(-1.5, V_list[4]+1), App.Vector(V_list[6]/2 , V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2 , V_list[1]/4), App.Vector(V_list[5], V_list[1]/4)))
-                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/4), App.Vector(V_list[5], V_list[1])))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[6]/2 , V_list[1]/4), App.Vector(V_list[5], V_list[1]/2)))
+                ExtGeoList.append(Part.LineSegment(App.Vector(V_list[5] , V_list[1]/2), App.Vector(V_list[5], V_list[1])))
                 ExtConstList.append(Sketcher.Constraint('Coincident',5,2,6,1))
                 ExtConstList.append(Sketcher.Constraint('Coincident',6,2,7,1)) 
                 ExtConstList.append(Sketcher.Constraint('Coincident',7,2,8,1))
@@ -680,7 +692,7 @@ class AmmoMaker(QWidget):
                 ExtConstList.append(Sketcher.Constraint('Coincident',12,2,0,1))    
                 ExtConstList.append( Sketcher.Constraint('Horizontal',6))
                 ExtConstList.append( Sketcher.Constraint('Vertical',7))
-                ExtConstList.append( Sketcher.Constraint('Horizontal',8))
+                #ExtConstList.append( Sketcher.Constraint('Horizontal',8))
                 #ExtConstList.append( Sketcher.Constraint('Vertical',9))  
             elif check_list[1] == 1:
                 ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(a, 0)))
