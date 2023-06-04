@@ -1,5 +1,5 @@
-################################################################################################# Line 704
-#                                            CartridgeMacro   ---   for FreeCAD                                                            Controllare per innesco
+################################################################################################# 
+#                                            CartridgeMacro   ---   for FreeCAD                                                            
 #       
 #    Author: NoxSilente
 #    Github: https://github.com/noxsilente/CartridgeMacro    --------- GNU V.3 Licence
