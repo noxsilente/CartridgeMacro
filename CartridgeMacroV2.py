@@ -24,14 +24,18 @@
 #   - 0.3 Fixing check_list and using conversion method
 #   - 0.4 Conjuntion of building process - 0.4.1 Some fixes
 #   - 0.5 Fixed 'FreeCAD library not working' - 0.5.1 Fixed 'float value' for Rimmed Straight
+#   - 0.6 Fixed check_list in classes and issue with 'sb - lb' constants 
 ########################################################################################################################
 
 __Title__ = "TKCartridgeMacro"
-__Version__ = "0.5.1"
-__Date__     = "08/06/2023" #DD/MM/YYYY
+__Version__ = "0.6"
+__Date__     = "10/06/2023" #DD/MM/YYYY
 import tkinter as tk
 import tkinter.messagebox, base64, os
 from PIL import  ImageTk, Image
+#creating constant values
+sb = -2.225 #small boxer
+lb = -2.665 #large boxer
 #: creating a boolean checking if the library is loaded
 try:
     print(Part.makeBox)
@@ -39,7 +43,7 @@ try:
 except:
     FCon = False
 # different lists for handle data
-Values, V_list=[],[]
+Values, V_list =[],[]
 x = 0
 prev_Frame = classmethod
 check_list=[0,0,0,0,0,0]
@@ -145,7 +149,7 @@ class Belted():
             :param vals:
             :return:
             '''
-            global V_list
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -164,6 +168,8 @@ class Belted():
             vals.append(N.get())
             V_list = [vals[-1], vals[8], vals[9], vals[10], vals[11], vals[12], vals[13],vals[0], vals[1], vals[2],
                       vals[3], vals[4], vals[5], vals[6], vals[7]]
+            check_list.pop(3)
+            check_list.insert(3,1)
         img = loadImage(belted)
         L2 = tk.Label(Frame2, image=img)
         L2.image = img
@@ -265,7 +271,7 @@ class Bottleneck():
             :param vals:
             :return:
             '''
-            global V_list
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -282,6 +288,8 @@ class Bottleneck():
             vals.append(float(self.l_6.get()))
             vals.append(N.get())
             V_list=[vals[-1], vals[7],vals[8],vals[9],vals[10],vals[11], vals[12], vals[0],vals[1],vals[2],vals[3],vals[6],vals[5],vals[4]]
+            check_list.pop(3)
+            check_list.insert(3,0)       
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #neck base
@@ -371,6 +379,7 @@ class Straight():
             :param vals:
             :return:
             '''
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -383,6 +392,8 @@ class Straight():
             vals.append(float(self.l_4.get()))
             vals.append(N.get())
             V_list = [vals[-1], vals[5], vals[6], vals[7], vals[8], vals[0], vals[1], vals[4], vals[3], vals[2]]
+            check_list.pop(3)
+            check_list.insert(3,3)
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #rim
@@ -460,8 +471,7 @@ class B_Straight():
             :param vals:
             :return:
             '''
-            
-            global V_list
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -476,6 +486,8 @@ class B_Straight():
             vals.append(N.get())
             V_list = [vals[-1], vals[6], vals[7], vals[8], vals[9], vals[0], vals[1], vals[2], vals[5], vals[4],
                       vals[3]]
+            check_list.pop(3)
+            check_list.insert(3,4)
             print(V_list)
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
@@ -548,7 +560,7 @@ class Rim_Bottleneck():
             :param vals:
             :return:
             '''
-            global V_list
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -563,6 +575,8 @@ class Rim_Bottleneck():
             vals.append(N.get())
             V_list = [vals[-1], vals[6], vals[7], vals[8], vals[9], vals[0], vals[1], vals[2], vals[3], vals[4],
                       vals[5]]
+            check_list.pop(3)
+            check_list.insert(3,2)
         img = loadImage(rim_b)
         L2 = tk.Label(Frame2, image=img)
         L2.image = img
@@ -645,7 +659,7 @@ class Rim_Straight():
             :param vals:
             :return:
             '''
-            global V_list
+            global V_list, check_list
             vals.clear()
             vals.append(-float(self.d_1.get())/2 if self.d_1.get()!='' else tkinter.messagebox.showerror('Error', 'Warning on First element'))
             vals.append(-float(self.d_2.get())/2)
@@ -655,6 +669,8 @@ class Rim_Straight():
             vals.append(float(self.l_2.get()))
             vals.append(N.get())
             V_list = [vals[-1], vals[4], vals[5], vals[0], vals[1], vals[2], vals[3]]
+            check_list.pop(3)
+            check_list.insert(3,5)
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #rim
@@ -711,8 +727,8 @@ def build():
 
 # [FREECAD PART]******************************************************************************************************************
 def create_obj():
-    global check_list, V_list
-    global x
+    global check_list, V_list, x, sb, lb
+    ExtGeoList, ExtConstList = [], []
     if FCon == 1:
         pass    
     else: 
@@ -775,7 +791,7 @@ def create_obj():
         win.destroy()
         #################################### Everything described in this part refers to the others part
 #                                                     ****Bottleneck Rimless**** 
-    if check_list[3] == 1:        
+    if check_list[3] == 0:        
         if V_list[2]<V_list[3]:  # if is available only neck length and not the length from base to neck base 
             V_list[2]= V_list[1]-V_list[2] # the point is calculated subtracting 'neck length - total length'
         else:
@@ -857,7 +873,7 @@ def create_obj():
         # adding values for trimming function, it will create a chamfer to the rim base
         trim_vals = 7,8,(V_list[13], V_list[4]/3), (V_list[12],0)
 #                                                     ****Straight Rimless****    
-    elif check_list[3] == 2:
+    elif check_list[3] == 3:
         ExtGeoList = [
         Part.LineSegment(App.Vector(V_list[5], V_list[1]), App.Vector(V_list[6], V_list[1])),
         Part.LineSegment(App.Vector(V_list[6], V_list[1]), App.Vector(V_list[7], V_list[4])),
@@ -926,7 +942,7 @@ def create_obj():
             #ExtGeoList.append(Part.LineSegment(App.Vector(V_list[9], 0), App.Vector(0, 0)))
         trim_vals = 5,6,(V_list[9], V_list[2]/3), (V_list[8],0)
 #                                                     ****Bottleneck Rimmed****    
-    if check_list[3] == 3:        
+    if check_list[3] == 2:        
         if V_list[2]<V_list[3]:
             V_list[2]= V_list[1]-V_list[2]
         else:
@@ -1018,7 +1034,7 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Vertical',10))                 
         trim_vals = 5,6,(V_list[10], V_list[4]/3), (V_list[9],0)
 #                                                     ****Bottleneck Belted****
-    if check_list[3] == 4:        
+    if check_list[3] == 1:        
         if V_list[2]<V_list[3]:
             V_list[2]= V_list[1]-V_list[2]
         else:
@@ -1106,7 +1122,7 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Vertical',14))  
         trim_vals = 9,10,(V_list[14], V_list[4]/3), (V_list[13],0)
 #                                                     ****Straight Belted****
-    if check_list[3] == 6:    
+    if check_list[3] == 5:    
         ExtGeoList = [
         Part.LineSegment(App.Vector(V_list[5], V_list[1]), App.Vector(V_list[6], V_list[1])),
         Part.LineSegment(App.Vector(V_list[6], V_list[1]), App.Vector(V_list[7], V_list[4])),
@@ -1178,7 +1194,7 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Horizontal',13))        
         trim_vals = 7,8,(V_list[10], V_list[2]/3), (V_list[9],0)
 #                                                     ****Straigth Rimmed****
-    elif check_list[3] == 5:
+    elif check_list[3] == 6:
         ExtGeoList = [
         Part.LineSegment(App.Vector(V_list[3], V_list[1]), App.Vector(V_list[4], V_list[1])),
         Part.LineSegment(App.Vector(V_list[4], V_list[1]), App.Vector(V_list[5], V_list[2])),
@@ -1251,7 +1267,8 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Vertical',5))
             ExtConstList.append( Sketcher.Constraint('Horizontal',6))
             ExtConstList.append( Sketcher.Constraint('Vertical',8))         
-        trim_vals = 3,4,(V_list[6], V_list[2]/3), (V_list[5],0)              
+        trim_vals = 3,4,(V_list[6], V_list[2]/3), (V_list[5],0)    
+    print(V_list)          
     Rev = sketch_name+'_revolution'
     # Creation of the sketch. If missing a value, a messagebox with error will occur.
     try:
