@@ -25,11 +25,12 @@
 #   - 0.4 Conjuntion of building process - 0.4.1 Some fixes
 #   - 0.5 Fixed 'FreeCAD library not working' - 0.5.1 Fixed 'float value' for Rimmed Straight
 #   - 0.6 Fixed check_list in classes and issue with 'sb - lb' constants 
+#   - 0.6.1 Minor Fixes
 ########################################################################################################################
 
 __Title__ = "TKCartridgeMacro"
-__Version__ = "0.6"
-__Date__     = "10/06/2023" #DD/MM/YYYY
+__Version__ = "0.6.1"
+__Date__     = "12/06/2023" #DD/MM/YYYY
 import tkinter as tk
 import tkinter.messagebox, base64, os
 from PIL import  ImageTk, Image
@@ -46,7 +47,7 @@ except:
 Values, V_list =[],[]
 x = 0
 prev_Frame = classmethod
-check_list=[0,0,0,0,0,0]
+check_list=[1,0,0,0,0,0]
 cwd =os.getcwd()  #'C:\\Program Files\\FreeCAD 0.20\\bin'
 print(cwd)
 # check_list 'switches':
@@ -1122,7 +1123,7 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Vertical',14))  
         trim_vals = 9,10,(V_list[14], V_list[4]/3), (V_list[13],0)
 #                                                     ****Straight Belted****
-    if check_list[3] == 5:    
+    if check_list[3] == 4:    
         ExtGeoList = [
         Part.LineSegment(App.Vector(V_list[5], V_list[1]), App.Vector(V_list[6], V_list[1])),
         Part.LineSegment(App.Vector(V_list[6], V_list[1]), App.Vector(V_list[7], V_list[4])),
@@ -1194,7 +1195,7 @@ def create_obj():
             ExtConstList.append( Sketcher.Constraint('Horizontal',13))        
         trim_vals = 7,8,(V_list[10], V_list[2]/3), (V_list[9],0)
 #                                                     ****Straigth Rimmed****
-    elif check_list[3] == 6:
+    elif check_list[3] == 5:
         ExtGeoList = [
         Part.LineSegment(App.Vector(V_list[3], V_list[1]), App.Vector(V_list[4], V_list[1])),
         Part.LineSegment(App.Vector(V_list[4], V_list[1]), App.Vector(V_list[5], V_list[2])),
