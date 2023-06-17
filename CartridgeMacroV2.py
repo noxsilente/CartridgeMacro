@@ -26,11 +26,13 @@
 #   - 0.5 Fixed 'FreeCAD library not working' - 0.5.1 Fixed 'float value' for Rimmed Straight
 #   - 0.6 Fixed check_list in classes and issue with 'sb - lb' constants 
 #   - 0.6.1 Minor Fixes
+#   - 1.0 Create button will be enabled only when values are grabbed and will be unabled after 
+#     the object creation
 ########################################################################################################################
 
 __Title__ = "TKCartridgeMacro"
-__Version__ = "0.6.1"
-__Date__     = "12/06/2023" #DD/MM/YYYY
+__Version__ = "1.0"
+__Date__     = "17/06/2023" #DD/MM/YYYY
 import tkinter as tk
 import tkinter.messagebox, base64, os
 from PIL import  ImageTk, Image
@@ -171,6 +173,7 @@ class Belted():
                       vals[3], vals[4], vals[5], vals[6], vals[7]]
             check_list.pop(3)
             check_list.insert(3,1)
+            Create.config(state='active')
         img = loadImage(belted)
         L2 = tk.Label(Frame2, image=img)
         L2.image = img
@@ -291,6 +294,8 @@ class Bottleneck():
             V_list=[vals[-1], vals[7],vals[8],vals[9],vals[10],vals[11], vals[12], vals[0],vals[1],vals[2],vals[3],vals[6],vals[5],vals[4]]
             check_list.pop(3)
             check_list.insert(3,0)       
+            Create.config(state='active')
+
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #neck base
@@ -395,6 +400,8 @@ class Straight():
             V_list = [vals[-1], vals[5], vals[6], vals[7], vals[8], vals[0], vals[1], vals[4], vals[3], vals[2]]
             check_list.pop(3)
             check_list.insert(3,3)
+            Create.config(state='active')
+
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #rim
@@ -489,7 +496,8 @@ class B_Straight():
                       vals[3]]
             check_list.pop(3)
             check_list.insert(3,4)
-            print(V_list)
+            Create.config(state='active')
+
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #base
@@ -578,6 +586,8 @@ class Rim_Bottleneck():
                       vals[5]]
             check_list.pop(3)
             check_list.insert(3,2)
+            Create.config(state='active')
+
         img = loadImage(rim_b)
         L2 = tk.Label(Frame2, image=img)
         L2.image = img
@@ -672,6 +682,8 @@ class Rim_Straight():
             V_list = [vals[-1], vals[4], vals[5], vals[0], vals[1], vals[2], vals[3]]
             check_list.pop(3)
             check_list.insert(3,5)
+            Create.config(state='active')
+
         self.d_1 = tk.StringVar() #bullet
         self.d_2 = tk.StringVar() #neck
         self.d_3 = tk.StringVar() #rim
@@ -1394,6 +1406,8 @@ def create_obj():
         App.getDocument(_Doc_).getObject(new_val).removeObjectsFromDocument()
         App.getDocument(_Doc_).removeObject(new_val)  
         win.destroy()
+    Create.config(state='disabled')
+
 # [END FREECAD PART]**************************************************************************************************************
 def changeclass(class_, value):
     global Frame2, prev_Frame, classe
@@ -1426,7 +1440,8 @@ N = tk.StringVar()
 N.set('Name')
 Name = tk.Entry(win, textvariable=N,relief=tk.SUNKEN)
 Name.grid(row=3, column=0, sticky=tk.NW)
-tk.Button(win, text='Create!', background='#000079' if FCon == 1 else '#790000', foreground='#fff', command= lambda : create_obj(), relief=tk.FLAT).grid(row=4,column=0,sticky=tk.NSEW)
+Create = tk.Button(win, text='Create!', background='#000079' if FCon == 1 else '#790000', foreground='#fff', command= lambda : create_obj(), relief=tk.FLAT, state= 'disabled')
+Create.grid(row=4,column=0,sticky=tk.NSEW)
 B1.grid(row=0,column=0,sticky=tk.EW,padx=2)
 B2.grid(row=1,column=0,sticky=tk.EW,padx=2)
 B4.grid(row=2,column=0,sticky=tk.EW,padx=2)
